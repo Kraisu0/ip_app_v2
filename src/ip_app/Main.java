@@ -6,6 +6,8 @@ public class Main {
 
         ip_app.Menu menu = new ip_app.Menu();
         menu.display_menu();
+		
+		//komentarz
 
     }
 }
