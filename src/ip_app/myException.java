@@ -7,10 +7,9 @@ public class myException extends Exception {
     }
 
     public static class Input_Variable_Exception extends myException{
-        public Input_Variable_Exception()
-        {
-            super("Błąd zmiennej wejsciowej");
-        }
+        public Input_Variable_Exception(){super("Błąd zmiennej wejsciowej");}
+
+
     }
 
 }
