@@ -28,7 +28,7 @@ public class Menu
 
                try {
                    switch (choice) {
-                       case "1" -> check_network();
+                       //case "1" -> check_network();
                        case "2" -> param_of_ip();
                        case "4" -> bianry_calculator();
                        case "q" -> flag = false;
@@ -49,8 +49,8 @@ public class Menu
 
        public void check_network()
        {
-           String x1 = null;
-           String x2 = null;
+           String ip_1 = "";
+           String ip_2 = "";
            System.out.println("-------------------------ip_app.Menu-------------------------");
            System.out.println("Sprawdzenie czy podane adresy ip są w jednej sieci. ");
            System.out.println("------------------------------------------------------\n");
@@ -58,19 +58,31 @@ public class Menu
            System.out.println("Podaj pierwsze ip: ");
 
            System.out.print(">> ");
-           x1 = scanner.nextLine();
+           ip_1 = scanner.nextLine();
 
            System.out.println("Podaj drugie ip: ");
 
            System.out.print(">> ");
-           x2 = scanner.nextLine();
+           ip_2 = scanner.nextLine();
+
+           if((ip_manager.f_network_address(ip_1)) == (ip_manager.f_network_address(ip_2)))
+           {
+               System.out.println("Podane ip są w jednej sieci.");
+               System.out.println("->Adres sieci: " + ip_manager.f_network_address(ip_1));
+           }else
+           {
+               System.out.println("Podane ip są w dwóch różnych sieciach.");
+               System.out.println("->Adres sieci dla ip " + ip_1 + ": " + ip_manager.f_network_address(ip_1));
+               System.out.println("->Adres sieci dla ip " + ip_2 + ": " + ip_manager.f_network_address(ip_2));
+           }
+
+
 
        }
 
     public void bianry_calculator()
     {
         String ip = "";
-        int[] numeric = new int[4];
         int[] binary = new int[8];
 
         System.out.println("------------------------------------------------------");
@@ -128,6 +140,33 @@ public class Menu
         System.out.println("Ilość hostów: " + ip_manager.f_host_quantity(ip));
         System.out.println();
 
+
+    }
+
+    public void subnetting()
+    {
+        String ip = "";
+        int subnet_quantity = 1;
+
+        System.out.println("------------------------------------------------------");
+        System.out.println("---- Obliczanie podsieci dla podanych parametrów -----");
+        System.out.println("----- FORMAT: x.x.x.x/maska, np: 192.168.10.5/30 -----");
+        System.out.println("------------------------------------------------------");
+        System.out.println("Podaj głowne ip/maska: ");
+        System.out.print(">> ");
+        ip = scanner.nextLine();
+        System.out.println("Podaj ile potrzebujesz podsieci: ");
+        System.out.print(">> ");
+        subnet_quantity = scanner.nextInt();
+        int[] tab_sub = new int [subnet_quantity];
+
+        for(int i = 0; i < subnet_quantity; i++)
+        {
+            System.out.println("Podaj ile hostów potrzebujesz dla sieci [" + i+1 + "/" + subnet_quantity + "]: ");
+            System.out.print(">> ");
+            tab_sub[i]  = scanner.nextInt();
+
+        }
 
     }
 
