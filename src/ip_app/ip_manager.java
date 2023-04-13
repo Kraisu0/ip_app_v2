@@ -228,7 +228,7 @@ public class ip_manager {
     }
 
     /**
-     * Funckja zapisuje adres ip do tablicy 2D 4 na 8
+     * Funckja zapisuje adres sieci do tablicy 2D 4 na 8
      * @param ip_full adres ip z którego pobieramy pierwsza część ip
      * @return tablice 2D z adresem ip bitowo
      */
@@ -281,6 +281,36 @@ public class ip_manager {
     }
 
     /**
+     * Funckja zapisuje adres broadcast do tablicy 2D 4 na 8
+     * @param ip_full adres ip z którego pobieramy pierwsza część ip
+     * @return tablice 2D z adresem ip bitowo
+     */
+    public static int [][] f_broadcast_address_tab(String ip_full, int mask)
+    {
+        String ip = f_get_ip(ip_full);
+        String result = "";
+
+        int[][] tab_mask = new int [4][8];
+        int[][] tab_ip = new int [4][8];
+        int[][] tab_result = new int [4][8];
+
+        for(int i = 0; i < 4; i++)
+        {
+            tab_mask[i] = f_numeric_to_binary(f_ip_to_num(Integer.toString(mask))[i]);
+            tab_ip[i] = f_numeric_to_binary(f_ip_to_num(ip)[i]);
+
+            tab_mask[i] = f_change_0_to_1(tab_mask[i]);
+
+            for(int j = 0; j < 8; j++)
+            {
+                tab_result[i][j]=f_or(tab_ip[i][j], tab_mask[i][j]);
+            }
+
+        }
+        return tab_result;
+    }
+
+    /**
      * Funkcja zwraca ip podanegto numeru hosta
      * @param ip_full ip sieci
      * @param nr_host nr szukanego hosta
@@ -316,6 +346,44 @@ public class ip_manager {
 
         return result;
     }
+
+    /**
+     * Funkcja zwraca ip podanegto numeru hosta
+     * @param ip_full ip sieci
+     * @param nr_host nr szukanego hosta
+     * @return adres numeru szukanego hosta
+     */
+    public static String f_host_nr_up_1(String ip_full, long nr_host)
+    {
+
+        String ip = f_get_ip(ip_full);
+        String result = "";
+
+        int[][] tab_ip = new int [4][8];
+        int[][] tab_result = new int [4][8];
+        int[][] tab_host = new int [4][8];
+
+        tab_host = f_numeric_to_binary_long(nr_host + 1);
+
+        for(int i = 0; i < 4; i++)
+        {
+            tab_ip[i] = f_numeric_to_binary(f_ip_to_num(ip)[i]);
+
+            for(int j = 0; j < 8; j++)
+            {
+                tab_result[i][j]=f_or(tab_ip[i][j], tab_host[i][j]);
+            }
+
+            result += f_bin_to_num(tab_result[i]);
+            if(i < 3)
+                result += ".";
+        }
+
+        result += "/" + f_get_mask(ip_full);
+
+        return result;
+    }
+
 
     /**
      * Funkcja wykonujaca operacje OR na bitach
@@ -405,7 +473,77 @@ public class ip_manager {
         }
     }
 
-    public static String [][] f_subnet_maker(String ip, )
+    public static int f_mask_calculate(long hosts) {
+        long addresses = hosts + 2;
+        int mask = 32;
 
+        for (int i = 0; i < 31; i++) {
+            if ((addresses > (long)Math.pow(2, i)) && (addresses <= (long)Math.pow(2, (i + 1)))) {
+                mask = 32 - (i+1);
+                break;
+            }
+        }
+
+        return mask;
+    }
+
+    public static String [] f_subnet_maker(String ip, int hosts, int num_of_subnet)
+    {
+        int mask = f_mask_calculate(hosts);
+        String ip_temp = f_get_ip(ip) + "/" + mask;
+
+        String[] subnet = new String[9];
+
+        /*
+        0 - numer podsieci
+        1 - adres sieci
+        2 - adres pierwszego hosta
+        3 - adres ostatniego hosta
+        4 - adres rozgłoszeniowy
+        5 - ilość hostów
+        6 - maska
+        7 - adres następnej sieci
+        8 - ilosć dostepnych hostów
+
+         */
+
+        subnet[0] = Integer.toString(num_of_subnet);
+        subnet[1] = f_network_address(ip_temp);
+        subnet[2] = f_host_nr(f_network_address(ip_temp),1);
+        subnet[3] = f_host_nr(f_network_address(ip_temp),f_host_quantity(ip_temp));
+        subnet[4] = f_broadcast_address(ip_temp);
+        subnet[5] = Integer.toString(hosts);
+        subnet[6] = Integer.toString(mask);
+        subnet[7] = f_host_nr_up_1(f_network_address(ip_temp),f_host_quantity(ip_temp));
+        subnet[8] = Long.toString(f_host_quantity(ip_temp));
+
+        return subnet;
+    }
+
+    public static void f_write_out_subnet (String[][] subnet, int subnet_quantity)
+    {
+
+        for(int i = 0; i < subnet_quantity; i++ ) {
+            System.out.println();
+            System.out.println("Nr_Podsieci:   " + subnet[i][0]);
+            System.out.println("Adres sieci:   " + subnet[i][1]);
+            System.out.println("Pierwszy host: " + subnet[i][2]);
+            System.out.println("Ostatni host:  " + subnet[i][3]);
+            System.out.println("Adres rozgł.:  " + subnet[i][4]);
+            System.out.println("Il. twoj. host:" + subnet[i][5]);
+            System.out.println("Il. dost. host:" + subnet[i][8]);
+            System.out.println("new ip: " + subnet[i][7]);
+            System.out.println();
+        }
+    }
+
+    public static int findIndex(int[] arr, int value) {
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == value) {
+                return i;
+            }
+        }
+        return -1; // zwróć -1, jeśli wartość nie zostanie znaleziona
+    }
 
 }

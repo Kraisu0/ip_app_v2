@@ -1,4 +1,5 @@
 package ip_app;
+import java.util.Arrays;
 import java.util.Scanner;
 
 
@@ -30,6 +31,7 @@ public class Menu
                    switch (choice) {
                        //case "1" -> check_network();
                        case "2" -> param_of_ip();
+                       case "3" -> subnetting();
                        case "4" -> bianry_calculator();
                        case "q" -> flag = false;
                        default -> throw new myException.Input_Variable_Exception();
@@ -148,6 +150,7 @@ public class Menu
         String ip = "";
         int subnet_quantity = 1;
 
+
         System.out.println("------------------------------------------------------");
         System.out.println("---- Obliczanie podsieci dla podanych parametrów -----");
         System.out.println("----- FORMAT: x.x.x.x/maska, np: 192.168.10.5/30 -----");
@@ -158,15 +161,36 @@ public class Menu
         System.out.println("Podaj ile potrzebujesz podsieci: ");
         System.out.print(">> ");
         subnet_quantity = scanner.nextInt();
-        int[] tab_sub = new int [subnet_quantity];
+        int[]tab_sub = new int [subnet_quantity];
+
+
+        String[][] subnets = new String[subnet_quantity][7];
 
         for(int i = 0; i < subnet_quantity; i++)
         {
-            System.out.println("Podaj ile hostów potrzebujesz dla sieci [" + i+1 + "/" + subnet_quantity + "]: ");
+
+            System.out.println("Podaj ile hostów potrzebujesz dla sieci [" + (i+1) + "/" + subnet_quantity + "]: ");
             System.out.print(">> ");
             tab_sub[i]  = scanner.nextInt();
+        }
+
+        for(int i = 0; i < subnet_quantity; i++)
+        {
+            int hosts = Arrays.stream(tab_sub).max().getAsInt();
+            int nr = ip_manager.findIndex(tab_sub, hosts);
+            tab_sub[nr] = 0;
+
+            subnets[i] = ip_manager.f_subnet_maker(ip, hosts, nr+1);
+
+            System.out.println("ip b: " + ip);
+            ip = subnets[i][7];
+
+            System.out.println("ip a: " + ip);
 
         }
+
+        ip_manager.f_write_out_subnet(subnets,subnet_quantity);
+
 
     }
 
