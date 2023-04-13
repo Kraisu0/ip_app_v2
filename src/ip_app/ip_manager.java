@@ -227,6 +227,26 @@ public class ip_manager {
         return result;
     }
 
+    public static int [][] f_network_address_tab(String ip_full)
+    {
+        //String mask = f_mask_change(f_get_mask(ip_full));
+        String ip = f_get_ip(ip_full);
+        String result = "";
+
+        //int[][] tab_mask = new int [4][8];
+        int[][] tab_ip = new int [4][8];
+        int[][] tab_result = new int [4][8];
+
+        for(int i = 0; i < 4; i++)
+        {
+            tab_ip[i] = f_numeric_to_binary(f_ip_to_num(ip)[i]);
+
+        }
+
+        return tab_ip;
+
+    }
+
     /**
      * Funckja zwraca adres rozgłoszeniowy
      * @param ip_full adres ip gdzie szukamy adresu rozgłoszeniowego
